@@ -451,10 +451,10 @@ END	{
 	print " */"
 	print " color([" level ", " level ", " level "])"
 	if (align > 0) {
-		print " assign(minx=0) /* polygon minx=" minx " */"
-		print " assign(miny=0) /* polygon miny=" miny " */"
-		print " assign(maxx=" xdim ") /* polygon maxx=" maxx " */"
-		print " assign(maxy=" ydim ") /* polygon maxy=" maxy " */"
+		print " assign(minx=" minx ") /* polygon minx=" minx " */"
+		print " assign(miny=" miny ") /* polygon miny=" miny " */"
+		print " assign(maxx=" maxx ") /* polygon maxx=" maxx " */"
+		print " assign(maxy=" maxy ") /* polygon maxy=" maxy " */"
 	} else {
 		print " assign(minx=" minx ")"
 		print " assign(miny=" miny ")"
