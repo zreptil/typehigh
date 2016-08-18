@@ -1,0 +1,10 @@
+* preserve space above and below each glyph to be constant over the whole font
+* more stable base by extruding conically instead of cylindrically
+* allow a kerning argument that adds kerns to characters, either manually
+    specified or extracted from each glyphs kerning table
+* author a nick
+
+* look at the keynote for other project ideas.  Get every input into stl
+    output.
+
+
