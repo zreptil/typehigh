@@ -6,7 +6,7 @@
 # You use it at your own risk, with no warranty, etc.
 version=20150415
 complex=4096
-filter=2
+filter=0
 gamma=1
 pixerr=1.0
 xres=2000
@@ -22,6 +22,7 @@ prefix="no_prefix_set"
 ppm='/tmp/trace2scad'$$'.ppm'
 pgm='/tmp/trace2scad'$$'.pgm'
 svg='/tmp/trace2scad'$$'.svg'
+svg_two='/tmp/trace2scad'$$'2.svg'
 raw='/tmp/trace2scad'$$'.raw'
 stmp='/tmp/trace2scad'$$'.scad'
 scad=""
@@ -214,6 +215,17 @@ then
 	echo "OpenSCAD output filename is $scad" 1>&2
 	echo "Converting image to" $pgm 1>&2
 fi
+ext="${infile##*.}"
+echo "Extension is $ext"
+
+if [ $ext == "svg" ]
+then
+  # change bounding box
+  echo "Modifying bounding box for svg"
+  sed 's/viewBox=".*"/viewBox="0 0 2048 2048"/g' $infile > $svg_two
+  infile=$svg_two
+fi
+
 convert $negate -gravity center -background white -gamma $gamma -adaptive-resize $xres'x'$yres $infile $ppm
 if [ "$filter" != 0 ]
 then
@@ -231,6 +243,7 @@ fi
 # potrace 1.10 says -a -1 (or any negative) to disable smoothing
 # -a -1 seem to work on both versions, so we just do that...
 potrace --opaque -a -1 -u $subres --group -sct $turd <$pgm >$svg
+
 
 # compute max possible bounding box...
 # based on the actual PGM file dimensions
@@ -563,6 +576,7 @@ then
 else
 	rm -f $ppm $pgm $svg $raw
 fi
+
 
 echo "Converting SCAD to STL using OpenScad"
 /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -o "${scad/scad/stl}" "$scad"
