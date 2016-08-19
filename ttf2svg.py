@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
-""" from a ttf file create a folder that contains an svg for each character in that font """
+""" from a ttf file create a folder that contains an svg for each character in that font .  requires fontforge.  also works on dfont and, therefore possibly ttc out of the box for free"""
 
-import fontforge
+import sys
 from sys import argv
 import os
+from localsettings import fontforgepath
+sys.path.append(fontforgepath)
+#sys.path.append("../fontforge")
+import fontforge
 
 ### argument handling
 #print(argv)
@@ -26,5 +30,7 @@ except OSError:
 
 for g in f.glyphs():
     g.export(save_path+"/"+fontname+"_"+g.glyphname+".svg")
+    ### this also works for bitmaps!
+    #g.export(save_path+"/"+fontname+"_"+g.glyphname+".bmp", 256)
 
 
