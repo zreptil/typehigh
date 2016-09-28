@@ -9,6 +9,24 @@ from localsettings import fontforgepath
 sys.path.append(fontforgepath)
 #sys.path.append("../fontforge")
 import fontforge
+import xml.etree.ElementTree as ET
+
+### helper functions
+def writeEditedSvgXml(anOutFilename, anInFilename):
+    """ this changes the viewbox of the svg by changing the second elemtn (presumably a y element) to zero
+    """
+    ### http://stackoverflow.com/questions/23417466/cant-seem-to-remove-ns0-namespace-declaration
+    ns = ET.register_namespace("", "http://www.w3.org/2000/svg") 
+    treeOuter = ET.ElementTree()
+    treeOuter.parse(anOutFilename)
+    tree = treeOuter.getroot()
+    sViewBox = tree.get('viewBox')
+    aViewBox = sViewBox.split(" ")
+    aViewBox[1] = 0
+    sViewBox = " ".join(map(str, aViewBox))
+    tree.set('viewBox', sViewBox)
+    treeOuter.write(anInFilename, default_namespace=ns)
+    return( ET.tostring(tree) )
 
 ### argument handling
 #print(argv)
@@ -29,8 +47,12 @@ except OSError:
     pass
 
 for g in f.glyphs():
-    g.export(save_path+"/"+fontname+"_"+g.glyphname+".svg")
+    glyphFileName = save_path+"/"+fontname+"_"+g.glyphname
+    g.export(glyphFileName+".svg")
     ### this also works for bitmaps!
-    #g.export(save_path+"/"+fontname+"_"+g.glyphname+".bmp", 256)
+    #g.export(glyphFileName+".bmp", 256)
+    ### fix viewBox problem, that all of the svg's are rendered outside of their viewboxes
+    writeEditedSvgXml(glyphFileName+".svg", glyphFileName+".svg")
+
 
 
