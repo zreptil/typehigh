@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 # trace2scad
 # 2015 by Hank Dietz, http://aggregate.org/hankd/
 # This script is distributed as full source subject

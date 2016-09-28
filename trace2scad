@@ -535,6 +535,7 @@ BEGIN	{
 	print "  translate([0,0,-" (curlev+1) "]) cube([2,2," (2*(curlev+1)) "],center=true);"
 	print " }"
 	print "}"
+    print "" prefix "();"
 	}
 ' </dev/null >>$scad
 
