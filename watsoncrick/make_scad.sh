@@ -1,11 +1,14 @@
 #!/bin/bash
 OPENSCAD_PATH=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
-INFILE=all_emojis.png
 
-echo "Converting png to scad"
-../type2scad -f 1 "$INFILE"
+for img in emojis/*.png; do
+  scad="${img/png/scad}"
+  echo "${img} --> ${scad}"
+  ../type2scad -f 0 "$img"
+  if [ -e "$OPENSCAD_PATH" ]; then
+    stl="${scad/scad/stl}"
+    echo "  $scad --> $stl"
+    $OPENSCAD_PATH -o $stl $scad
+  fi
+done
 
-if [ -e "$OPENSCAD_PATH" ]; then
-  echo "Converting scad to stl"
-  $OPENSCAD_PATH -o ${INFILE/png/stl} ${INFILE/png/scad}
-fi
