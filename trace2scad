@@ -4,7 +4,14 @@
 # This script is distributed as full source subject
 # to the Creative Commons - Attribution constraints.
 # You use it at your own risk, with no warranty, etc.
-version=20150415
+#
+# install potrace on ubuntu using these commands:
+# sudo apt update
+# sudo apt install potrace
+#
+# install imagemagick on ubuntu using:
+# sudo apt install imagemagick
+version=20230515
 complex=4096
 filter=2
 gamma=1
@@ -359,7 +366,7 @@ BEGIN	{
 	dx=0
 	dy=0
 	bufpts[objno] = pts
-	buf[objno] = sprintf("polygon([[%d,%d]", curx, cury)
+	buf[objno] = sprintf("  polygon([[%d,%d]", curx, cury)
 	convexity=2
 	for (i=2; i<=pts; ++i) {
 		buf[objno] = buf[objno] sprintf(",[%d,%d]", xpt[i], ypt[i])
@@ -449,21 +456,21 @@ END	{
 	print "    http://aggregate.org/MAKE/TRACE2SCAD/"
 	print "    Optimized model has " allpts "/" (allpts+byebye) " original points"
 	print " */"
-	print " color([" level ", " level ", " level "])"
+	print " // color([" level ", " level ", " level "])"
 	if (align > 0) {
-		print " assign(minx=" minx ") /* polygon minx=" minx " */"
-		print " assign(miny=" miny ") /* polygon miny=" miny " */"
-		print " assign(maxx=" maxx ") /* polygon maxx=" maxx " */"
-		print " assign(maxy=" maxy ") /* polygon maxy=" maxy " */"
+		print " minx=0; /* polygon minx=" minx " */"
+		print " miny=0; /* polygon miny=" miny " */"
+		print " maxx=" xdim "; /* polygon maxx=" maxx " */"
+		print " maxy=" ydim "; /* polygon maxy=" maxy " */"
 	} else {
-		print " assign(minx=" minx ")"
-		print " assign(miny=" miny ")"
-		print " assign(maxx=" maxx ")"
-		print " assign(maxy=" maxy ")"
+		print " minx=" minx ";"
+		print " miny=" miny ";"
+		print " maxx=" maxx ";"
+		print " maxy=" maxy ";"
 	}
-	print " assign(dx=maxx-minx)"
-	print " assign(dy=maxy-miny)"
-	print " assign(maxd=((dx>dy)?dx:dy))"
+	print " dx=maxx-minx;"
+	print " dy=maxy-miny;"
+	print " maxd=((dx>dy)?dx:dy);"
 	print " scale([1/maxd, 1/maxd, 1])"
 	print " translate([-minx-dx/2, -miny-dy/2, 0])"
 	print sprintf(" linear_extrude(height=1, convexity=%d)", allpts)
@@ -525,17 +532,23 @@ BEGIN	{
 	print "module " prefix "()"
 	print "{"
 	print " /* all layers combined, scaled to within a 1mm cube */"
-	print " scale([1, 1, 1/" curlev "])"
-	print " difference() {"
-	print "  union() {"
+	if (curlev>1)
+	{
+	  print " scale([1, 1, 1/" curlev "])"
+	  # print " difference() {"
+      print "  union() {"
+	}
 	for (i=0; i<curlev; ++i) {
 		print "   scale([1,1," 2*(i+1) "]) translate([0,0,-0.5]) " prefix "_" (i+1) "();"
 	}
-	print "  }"
-	print "  translate([0,0,-" (curlev+1) "]) cube([2,2," (2*(curlev+1)) "],center=true);"
-	print " }"
+	if (curlev>1)
+	{
+	  print "  }"
+	  # print "  translate([0,0,-" (curlev+1) "]) cube([2,2," (2*(curlev+1)) "],center=true);"
+	  # print " }"
+	}
 	print "}"
-    print "" prefix "();"
+	print "scale([100,100,3]) " prefix "();"
 	}
 ' </dev/null >>$scad
 
